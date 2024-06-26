@@ -213,15 +213,33 @@ data "aws_iam_policy_document" "replication" {
   }
 }
 
+resource "aws_iam_policy" "replication" {
+  count = var.use_inline_policy == true ? 0 : 1
+
+  name_prefix = "CrossRegionReplicationPolicy"
+  policy      = data.aws_iam_policy_document.replication.json
+}
+
 resource "aws_iam_role" "replication" {
   name_prefix          = "${var.resource_prefix}-replication"
   path                 = "/${var.resource_prefix}/"
   assume_role_policy   = data.aws_iam_policy_document.s3_assume_role.json
   permissions_boundary = var.permissions_boundary
-  inline_policy {
-    name   = "S3Replication"
-    policy = data.aws_iam_policy_document.replication.json
+  dynamic "inline_policy" {
+    for_each = var.use_inline_policy == true ? [1] : []
+
+    content {
+      name   = "S3Replication"
+      policy = data.aws_iam_policy_document.replication.json
+    }
   }
+}
+
+resource "aws_iam_policy_attachment" "replication" {
+  count = var.use_inline_policy == true ? 0 : 1
+
+  role       = aws_iam_role.replication.name
+  policy_arn = aws_iam_policy.replication[0].arn
 }
 
 resource "aws_s3_bucket_replication_configuration" "replication" {

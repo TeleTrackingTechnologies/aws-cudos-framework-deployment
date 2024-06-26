@@ -46,3 +46,9 @@ variable "enable_split_cost_allocation_data" {
   description = "Enable split cost allocation data for ECS and EKS for this CUR report"
   default     = false
 }
+
+variable "permissions_boundary" {
+  type        = string
+  description = "Permission Boundary for IAM role"
+  default     = null
+}

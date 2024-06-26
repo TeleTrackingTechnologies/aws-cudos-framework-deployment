@@ -124,7 +124,7 @@ data "aws_iam_policy_document" "bucket_policy" {
     ]
     condition {
       test     = "StringEquals"
-      values   = ["arn:${data.aws_partition.this.partition}:cur:${data.aws_region.this.region}:${data.aws_caller_identity.this.account_id}:definition/*"]
+      values   = ["arn:${data.aws_partition.this.partition}:cur:${data.aws_region.this.name}:${data.aws_caller_identity.this.account_id}:definition/*"]
       variable = "aws:SourceArn"
     }
     condition {
@@ -148,7 +148,7 @@ data "aws_iam_policy_document" "bucket_policy" {
     ]
     condition {
       test     = "StringEquals"
-      values   = ["arn:${data.aws_partition.this.partition}:cur:${data.aws_region.this.region}:${data.aws_caller_identity.this.account_id}:definition/*"]
+      values   = ["arn:${data.aws_partition.this.partition}:cur:${data.aws_region.this.name}:${data.aws_caller_identity.this.account_id}:definition/*"]
       variable = "aws:SourceArn"
     }
     condition {
@@ -214,9 +214,10 @@ data "aws_iam_policy_document" "replication" {
 }
 
 resource "aws_iam_role" "replication" {
-  name_prefix        = "${var.resource_prefix}-replication"
-  path               = "/${var.resource_prefix}/"
-  assume_role_policy = data.aws_iam_policy_document.s3_assume_role.json
+  name_prefix          = "${var.resource_prefix}-replication"
+  path                 = "/${var.resource_prefix}/"
+  assume_role_policy   = data.aws_iam_policy_document.s3_assume_role.json
+  permissions_boundary = var.permissions_boundary
   inline_policy {
     name   = "S3Replication"
     policy = data.aws_iam_policy_document.replication.json

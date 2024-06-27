@@ -52,3 +52,9 @@ variable "permissions_boundary" {
   description = "Permission Boundary for IAM role"
   default     = null
 }
+
+variable "use_inline_policy" {
+  type        = bool
+  description = "Use inline policy or policy attachments"
+  default     = true
+}

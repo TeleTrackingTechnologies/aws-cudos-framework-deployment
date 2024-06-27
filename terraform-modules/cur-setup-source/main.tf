@@ -235,7 +235,7 @@ resource "aws_iam_role" "replication" {
   }
 }
 
-resource "aws_iam_policy_attachment" "replication" {
+resource "aws_iam_role_policy_attachment" "replication" {
   count = var.use_inline_policy == true ? 0 : 1
 
   role       = aws_iam_role.replication.name
